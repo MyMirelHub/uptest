@@ -2,7 +2,6 @@ apiVersion: kuttl.dev/v1beta1
 kind: TestAssert
 timeout: {{ .TestCase.Timeout }}
 commands:
-- command: ${KUBECTL} annotate managed --all upjet.upbound.io/test=true --overwrite
 {{- range $resource := .Resources }}
 {{- if eq $resource.KindGroup "secret." -}}
   {{continue}}
@@ -12,8 +11,10 @@ commands:
 {{- end }}
 {{- range $condition := $resource.Conditions }}
 {{- if $resource.Namespace }}
+- command: ${KUBECTL} annotate {{ $resource.KindGroup }}/{{ $resource.Name }} upjet.upbound.io/test=true --overwrite  --namespace {{ $resource.Namespace }}
 - command: ${KUBECTL} wait {{ $resource.KindGroup }}/{{ $resource.Name }} --for=condition={{ $condition }} --timeout 10s --namespace {{ $resource.Namespace }}
 {{- else }}
+- ${KUBECTL} annotate {{ $resource.KindGroup }}/{{ $resource.Name }} upjet.upbound.io/test=true --overwrite
 - command: ${KUBECTL} wait {{ $resource.KindGroup }}/{{ $resource.Name }} --for=condition={{ $condition }} --timeout 10s
 {{- end }}
 {{- end }}

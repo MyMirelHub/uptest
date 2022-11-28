@@ -12,7 +12,6 @@ commands:
 - command: ${KUBECTL} wait {{ $resource.KindGroup }}/{{ $resource.Name }} --for=delete --timeout 10s
 {{- end }}
 {{- end }}
-- command: ${KUBECTL} wait managed --all --for=delete --timeout 10s
 {{- if .TestCase.TeardownScriptPath }}
 - command: {{ .TestCase.TeardownScriptPath }}
 {{- end }}
